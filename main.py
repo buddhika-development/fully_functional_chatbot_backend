@@ -1,6 +1,6 @@
-def main():
-    print("Hello from fully-functional-chatbot-backend!")
+from fastapi import FastAPI
+from src.routes.health.health_route import router as health_router
 
+app = FastAPI()
 
-if __name__ == "__main__":
-    main()
+app.include_router(health_router)
