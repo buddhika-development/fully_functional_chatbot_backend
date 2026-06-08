@@ -9,7 +9,7 @@ class BaseMixing(Base):
     __abstract__ = True
 
     id: Mapped[str] = mapped_column(
-        default=uuid.uuid4().hex,
+        default=lambda : uuid.uuid4().hex,
         primary_key=True
     )
 

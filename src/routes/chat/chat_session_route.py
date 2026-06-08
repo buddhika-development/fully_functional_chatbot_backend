@@ -1,20 +1,17 @@
 from fastapi import APIRouter
+from src.handlers.chat.chat_ssesion_handle import access_use_chat_sesion, delete_user_chat_session
 
 router = APIRouter(
     prefix="/api/v1/chat_session",
     tags=["chat_session"]
 )
 
+dummy_user_id = "40515f81-57b0-4f02-b33d-512f18e968b2"
+
 @router.get("/me")
 async def _get_user_chat_session():
-    return {
-        "status": "success",
-        "message" : "this is chat session access process related to the user"
-    }
+    return await access_use_chat_sesion(dummy_user_id)
 
-@router.delete("/:chat_session_id")
+@router.delete("/{chat_session_id}")
 async def _delete_chat_session(chat_session_id: str):
-    return {
-        "status": "success",
-        "message" : "this is delete chat session access process related to the user"
-    }
+    return await delete_user_chat_session(dummy_user_id ,chat_session_id)
