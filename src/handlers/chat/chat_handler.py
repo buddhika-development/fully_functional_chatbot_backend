@@ -5,6 +5,7 @@ import src.repository as repo
 import logging
 from src.controller.chat_controller import create_new_chat_session
 from src.db_actions.conversation import create_conversation, get_chat_session_conversation
+from src.prompts.chatbot_response_generator import chat_response_generator_prompt
 
 logger = logging.getLogger("uvicorn.error")
 dummy_user_id = "40515f81-57b0-4f02-b33d-512f18e968b2"
@@ -26,7 +27,8 @@ async def handle_structured_response(
                 user_message= user_message
             )
 
-        response = repo.mistral_structured_model.invoke(user_message)
+        prompt = chat_response_generator_prompt(user_message)
+        response = repo.mistral_structured_model.invoke(prompt)
 
         return {
             "status": "success",
@@ -71,8 +73,9 @@ async def handle_stream_response(
             session_id = chat_session.id
             yield f"event: session_id\ndata: {chat_session.id}\n\n"
 
+        prompt = chat_response_generator_prompt(user_message)
         response = ""
-        async for chunk in repo.mistral_stream_model.astream(user_message):
+        async for chunk in repo.mistral_stream_model.astream(prompt):
             if chunk:
                 response += chunk.content
                 yield f"data: {chunk.content}\n\n"
