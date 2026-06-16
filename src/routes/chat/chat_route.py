@@ -1,7 +1,8 @@
 from fastapi import APIRouter, status
 from fastapi.responses import StreamingResponse
-import src.repository as repo
-from src.handlers.chat.chat_handler import handle_structured_response, handle_stream_response, access_chat_session_conversation_history
+from src.handlers.chat.structured_chat_handler import handle_structured_response
+from src.handlers.chat.streaming_chat_handler import  handle_stream_response
+from src.handlers.chat.chat_conversation_hitory import access_chat_session_conversation_history
 
 from pydantic import BaseModel
 
