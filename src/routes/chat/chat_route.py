@@ -30,5 +30,5 @@ async def _stream_chat_handler(req: ChatRequestBody):
     )
 
 @router.get("/{id}")
-async def _get_session_conversation_history(id: str):
-    return await access_chat_session_conversation_history(session_id= id)
+async def _get_session_conversation_history(id: str, limit: int = 10, skip: int = 0):
+    return await access_chat_session_conversation_history(session_id= id, limit=limit, skip=skip)

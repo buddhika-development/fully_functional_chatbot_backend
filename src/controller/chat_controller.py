@@ -11,4 +11,3 @@ async def create_new_chat_session(
     title = await generate_session_title(user_message)
     chat_session = await update_chat_session_title(chat_session.id, title)
     return chat_session
-

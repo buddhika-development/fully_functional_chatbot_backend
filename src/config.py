@@ -13,4 +13,10 @@ class Config:
     mistral_api_key = os.getenv("MISTRAL_API_KEY")
     mistral_default_model = os.getenv("MISTRAL_DEFAULT_MODEL")
 
+    # redis configuration
+    redis_host = os.getenv("REDIS_HOST")
+    redis_port = os.getenv("REDIS_PORT")
+    redis_password = os.getenv("REDIS_PASSWORD")
+    redis_db_index = os.getenv("REDIS_DATABASE_INDEX")
+
 config = Config()
