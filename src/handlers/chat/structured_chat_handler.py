@@ -1,12 +1,13 @@
+import logging
+import asyncio
 from fastapi import HTTPException, status
 import src.repository as repo
-import logging
 from src.controller.chat_controller import create_new_chat_session
 from src.prompts.chatbot_response_generator import chat_response_generator_prompt
+from src.controller.chat_session_contoller import chat_session_conversation_handler
 
 logger = logging.getLogger("uvicorn.error")
 dummy_user_id = "40515f81-57b0-4f02-b33d-512f18e968b2"
-
 
 async def handle_structured_response(
     session_id: str | None = None, user_message: str = ""
@@ -25,6 +26,12 @@ async def handle_structured_response(
 
         prompt = chat_response_generator_prompt(user_message)
         response = repo.mistral_structured_model.invoke(prompt)
+
+        asyncio.create_task(
+            chat_session_conversation_handler(
+                session_id=session_id, user_message=user_message, ai_response=response
+            )
+        )
 
         return {
             "status": "success",
