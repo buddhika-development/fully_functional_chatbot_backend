@@ -1,5 +1,6 @@
 from src.db_actions.conversation import create_conversation, get_the_conversation_turn_count
 from src.controller.ai_controllers.session_summarizer import chat_session_summarizer
+import src.redis_actions.chat_session_actions as redis
 
 async def chat_session_conversation_handler(
         session_id: str,
@@ -19,17 +20,21 @@ async def chat_session_conversation_handler(
         content=ai_response,
         additional_info=None
     )
-    conversations = [{
-        "role": "human",
-        "content": user_message
-    }, {
-        "role": "assistant",
-        "content": ai_response
-    }]
+
+    await redis.update_recent_session_conversations(
+        session_id= session_id,
+        human_message= {
+            "role": "human",
+            "content": user_message
+        },
+        ai_message= {
+            "role": "assistant",
+            "content": ai_response
+        }
+    )
 
     conversation_turn_count = await get_the_conversation_turn_count(session_id)
     if conversation_turn_count >= 4:
         await chat_session_summarizer(
-            chat_session_id=session_id,
-            conversation=conversations
+            chat_session_id=session_id
         )

@@ -1,12 +1,11 @@
 import logging
-
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
-
 from src.libs.postgres.database import get_engine, get_async_engine
 from sqlalchemy.orm import sessionmaker
 from src.libs.llm.mistral import load_mistral_structured_model, load_mistral_stream_model
-from src.libs.redis.redis import get_redis_client
+from src.libs.redis.redis import get_redis_client, get_async_redis_client
 import redis
+import redis.asyncio as async_redis
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -17,9 +16,10 @@ async_postgres = None
 mistral_structured_model = None
 mistral_stream_model = None
 redis_client = None
+async_redis_client = None
 
 def repository_init():
-    global engine, postgres, mistral_structured_model, mistral_stream_model, async_engine, async_postgres, mistral_structured_model, mistral_stream_model, redis_client
+    global engine, postgres, mistral_structured_model, mistral_stream_model, async_engine, async_postgres, mistral_structured_model, mistral_stream_model, redis_client, async_redis_client
 
     try:
         engine = get_engine()
@@ -45,6 +45,10 @@ def repository_init():
         redis_pool = get_redis_client()
         redis_client = redis.Redis(connection_pool=redis_pool)
         logger.info("Successfully connected the redis client.")
+
+        async_redis_pool = get_async_redis_client()
+        async_redis_client = async_redis.Redis(connection_pool=async_redis_pool)
+        logger.info("Successfully connected the async redis client.")
 
         logger.info("Successfully execute the repository initialization process.")
     except Exception as e:

@@ -72,7 +72,7 @@ async def update_chat_session_summery(
             raise Exception("Chat session not found")
 
         chat_session.session_summary = session_summary
-        conn.commit()
-        conn.refresh(chat_session)
+        await conn.commit()
+        await conn.refresh(chat_session)
 
         return chat_session

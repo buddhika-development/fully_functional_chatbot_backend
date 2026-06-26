@@ -9,6 +9,7 @@ from src.db_actions.conversation import (
 )
 from src.prompts.chatbot_response_generator import chat_response_generator_prompt
 import asyncio
+from src.redis_actions.chat_session_actions import load_session_information
 
 logger = logging.getLogger("uvicorn.error")
 dummy_user_id = "40515f81-57b0-4f02-b33d-512f18e968b2"
@@ -27,6 +28,7 @@ async def handle_stream_response(session_id: str = None, user_message: str = "")
             session_id = chat_session.id
             yield f"event: session_id\ndata: {chat_session.id}\n\n"
 
+        await load_session_information(session_id)
         prompt = await chat_response_generator_prompt(user_message, session_id)
 
         response = ""
