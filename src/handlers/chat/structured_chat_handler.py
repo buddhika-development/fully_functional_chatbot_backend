@@ -7,10 +7,11 @@ from src.prompts.chatbot_response_generator import chat_response_generator_promp
 from src.controller.chat_session_contoller import chat_session_conversation_handler
 
 logger = logging.getLogger("uvicorn.error")
-dummy_user_id = "40515f81-57b0-4f02-b33d-512f18e968b2"
 
 async def handle_structured_response(
-    session_id: str | None = None, user_message: str = ""
+        session_id: str | None = None,
+        user_message: str = "",
+        user_id: str | None = None
 ):
     if not user_message or not user_message.strip():
         raise HTTPException(
@@ -21,7 +22,7 @@ async def handle_structured_response(
     try:
         if session_id is None:
             chat_session = await create_new_chat_session(
-                user_id=dummy_user_id, user_message=user_message
+                user_id=user_id, user_message=user_message
             )
 
         prompt = chat_response_generator_prompt(user_message)

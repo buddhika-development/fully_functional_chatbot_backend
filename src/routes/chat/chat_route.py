@@ -1,8 +1,9 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from fastapi.responses import StreamingResponse
 from src.handlers.chat.structured_chat_handler import handle_structured_response
 from src.handlers.chat.streaming_chat_handler import  handle_stream_response
 from src.handlers.chat.chat_conversation_hitory import access_chat_session_conversation_history
+from src.utils.get_user import get_user_id_from_request
 
 from pydantic import BaseModel
 
@@ -16,18 +17,25 @@ router = APIRouter(
 )
 
 @router.post("/structure")
-async def _structured_chat_handler(req: ChatRequestBody):
+async def _structured_chat_handler(
+        req: ChatRequestBody,
+        user_id = Depends(get_user_id_from_request)
+):
     return  await handle_structured_response(
         session_id= req.chat_session_id,
-        user_message= req.user_message
+        user_message= req.user_message,
+        user_id= user_id
     )
 
 @router.post("/stream")
-async def _stream_chat_handler(req: ChatRequestBody):
+async def _stream_chat_handler(
+        req: ChatRequestBody,
+        user_id = Depends(get_user_id_from_request)
+):
     return StreamingResponse(
-        handle_stream_response(user_message=req.user_message, session_id= req.chat_session_id),
+        handle_stream_response(user_message=req.user_message, session_id= req.chat_session_id, user_id= user_id),
         status_code=status.HTTP_200_OK,
-        media_type= "text/event-stream"
+        media_type= "text/event-stream",
     )
 
 @router.get("/{id}")
