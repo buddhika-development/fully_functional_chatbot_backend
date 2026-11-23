@@ -12,9 +12,8 @@ import asyncio
 from src.redis_actions.chat_session_actions import load_session_information
 
 logger = logging.getLogger("uvicorn.error")
-dummy_user_id = "40515f81-57b0-4f02-b33d-512f18e968b2"
 
-async def handle_stream_response(session_id: str = None, user_message: str = ""):
+async def handle_stream_response(session_id: str = None, user_message: str = "", user_id: str | None = None):
     if not user_message or not user_message.strip():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -23,7 +22,7 @@ async def handle_stream_response(session_id: str = None, user_message: str = "")
     try:
         if session_id is None:
             chat_session = await create_new_chat_session(
-                user_id=dummy_user_id, user_message=user_message
+                user_id=user_id, user_message=user_message
             )
             session_id = chat_session.id
             yield f"event: session_id\ndata: {chat_session.id}\n\n"
